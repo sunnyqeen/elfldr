@@ -26,13 +26,14 @@ along with this program; see the file COPYING. If not, see
 
 
 #include "socksrv_elf.c"
+#include "autoload_elf.c"
 
 
 /**
  *
  **/
 static char* const argv[] = {"elfldr.elf", 0};
-
+static char* const argv1[] = {"autoload.elf", 0};
 
 /**
  * We are running inside SceRedisServer, spawn socksrv.elf.
@@ -50,6 +51,11 @@ main() {
 
   if(elfldr_sanity_check(socksrv_elf, socksrv_elf_len)) {
     LOG_PUTS("socksrv.elf is corrupted");
+    return -1;
+  }
+
+  if(elfldr_sanity_check(autoload_elf, autoload_elf_len)) {
+    LOG_PUTS("autoload.elf is corrupted");
     return -1;
   }
 
@@ -74,6 +80,7 @@ main() {
   } else {
     signal(SIGCHLD, SIG_IGN);
     ret = elfldr_spawn(-1, argv, socksrv_elf, socksrv_elf_len);
+    ret = elfldr_spawn(-1, argv1, autoload_elf, autoload_elf_len);
   }
 
   // restore my privileges
