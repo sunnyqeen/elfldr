@@ -26,12 +26,14 @@ along with this program; see the file COPYING. If not, see
 #include "pt.h"
 
 INCASSET(socksrv_elf, "socksrv.elf");
+INCASSET(autoload_elf, "autoload.elf");
 
 
 /**
  *
  **/
 static char* const argv[] = {"elfldr.elf", 0};
+static char* const argv1[] = {"autoload.elf", 0};
 
 
 /**
@@ -50,6 +52,11 @@ main() {
 
   if(elfldr_sanity_check(socksrv_elf, socksrv_elf_size)) {
     LOG_PUTS("socksrv.elf is corrupted");
+    return -1;
+  }
+
+  if(elfldr_sanity_check(autoload_elf, autoload_elf_size)) {
+    LOG_PUTS("autoload.elf is corrupted");
     return -1;
   }
 
@@ -74,6 +81,7 @@ main() {
   } else {
     signal(SIGCHLD, SIG_IGN);
     ret = elfldr_spawn(-1, argv, socksrv_elf, socksrv_elf_size);
+    ret = elfldr_spawn(-1, argv1, autoload_elf, autoload_elf_size);
   }
 
   // restore my privileges

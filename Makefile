@@ -28,7 +28,7 @@ LDADD  := -lSceSsl -lSceHttp
 
 all: elfldr-ps5.elf
 
-bootstrap.o: socksrv.elf
+bootstrap.o: socksrv.elf autoload.elf
 main.o: bootstrap.elf
 
 bootstrap.elf: bootstrap.o elfldr.o pt.o notify.o
@@ -37,6 +37,10 @@ bootstrap.elf: bootstrap.o elfldr.o pt.o notify.o
 
 socksrv.elf: socksrv.o selfldr.o elfldr.o pt.o notify.o uri.o
 	$(CC) -o $@ $^ $(LDADD)
+	$(STRIP) $@
+
+autoload.elf: autoload.o elfldr.o pt.o notify.o
+	$(CC) -o $@ $^
 	$(STRIP) $@
 
 elfldr-ps5.elf: main.o elfldr.o pt.o notify.o
@@ -49,4 +53,4 @@ clean:
 test: elfldr-ps5.elf
 	$(PS5_DEPLOY) -h $(PS5_HOST) -p $(PS5_PORT) $^
 
-.INTERMEDIATE: socksrv.elf bootstrap.elf
+.INTERMEDIATE: socksrv.elf bootstrap.elf autoload.elf
